@@ -25,11 +25,19 @@ plot(t$geometry)
 # Get geohashes that intersect
 #=====================================
 
-gh_t <- gh_covering(t)
+gh_t <- gh_covering(t, precision = 6)
 gh_t
-plot(gh_t)
+plot(gh_t$geometry)
 
 gh_t <- rownames_to_column(gh_t, var = "geohashid")
+
+gh_sf <- st_sf(gh_t) # convert to spatial object
+
+# Find intersections
+intersections <- st_intersects(gh_sf, t, sparse = FALSE)
+
+# Subset the spatial object based on intersections
+gh_sf_subset <- gh_sf[intersections, ]
 
 # Plot
 #=====================================
@@ -44,7 +52,7 @@ leaflet() %>%
     opacity = 0.7 # Transparency for outline
   ) %>%
   addPolygons(
-    data = gh_t,
+    data = gh_sf_subset,
     color = "black", # Outline color
     fillOpacity = 0, # Transparency for fill
     weight = .5,
