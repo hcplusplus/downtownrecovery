@@ -94,3 +94,14 @@ n_distinct(all_metros$name) # but really 300, because of Ottawa having 2 rows
 st_write(all_metros,
          '/Users/jpg23/data/downtownrecovery/top_300_metros/top_300_metros_detailed.geojson')
          # '/Users/jpg23/data/downtownrecovery/top_300_metros/top_300_metros.geojson')
+
+# Also export Bloomington, IN & Sebastian-Vero Beach, FL to query separately
+# (these were left out of the original query because Ottawa was counted 3x)
+
+sb <- all_metros %>%
+  filter(str_detect(name, 'Bloomington, IN|Sebastian-Vero Beach, FL'))
+
+sb
+
+st_write(sb,
+         '/Users/jpg23/data/downtownrecovery/top_300_metros/bloomington_verobeach_metros.geojson')

@@ -113,11 +113,19 @@ head(d4)
 nrow(d4)
 n_distinct(d4$geohash6)
 
+# Add Bloomington IN & Vero Beach FL
+#=====================================
+
+bv <- read.csv('/Users/jpg23/data/downtownrecovery/spectus_exports/top300_bloomington_verobeach/bloomington_verobeach.csv') %>%
+  rename(geohash6 = GEOHASH6, n_stops = N_STOPS)
+
+head(bv)
+
 # Aggregate total stops by geohash
 #=====================================
 
 d <- 
-  rbind(d2, d3, d4)  %>%
+  rbind(d2, d3, d4, bv)  %>%
   # rbind(d1, d2, d3, d4)  %>%
   group_by(geohash6) %>%
   summarize(total_stops = sum(n_stops, na.rm = T)) %>%
@@ -128,8 +136,12 @@ n_distinct(d$geohash6)
 nrow(d)
 
 st_write(d,
-         '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31.csv',
+         '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31_bloomington_verobeach_included.csv',
          row.names = F)
+
+# st_write(d,
+#          '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31.csv',
+#          row.names = F)
 
 # st_write(d,
 #          '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-03-01_2024-09-31.csv',
