@@ -69,14 +69,34 @@ range(t24_scaled$sum_unique_devices)
 geo_sf <- st_read('/Users/jpg23/data/downtownrecovery/toronto/toronto_6digit_geohashes.geojson')
 head(geo_sf)
 
-geo_sf19 <- geo_sf %>%
+# 2019
+#---------
+
+# Scaled
+geo_sf19_scaled <- geo_sf %>%
   left_join(t19_scaled)
 
-head(geo_sf19)
-nrow(geo_sf19) == nrow(geo_sf)
+head(geo_sf19_scaled)
+nrow(geo_sf19_scaled) == nrow(geo_sf)
 
-geo_sf24 <- geo_sf %>%
+# Not scaled
+geo_sf19 <- geo_sf %>%
+  left_join(t19_sum)
+
+head(geo_sf19)
+
+# 2024
+#---------
+
+# Scaled
+geo_sf24_scaled <- geo_sf %>%
   left_join(t24_scaled)
+
+head(geo_sf24_scaled)
+
+# Not scaled
+geo_sf24 <- geo_sf %>%
+  left_join(t24_sum)
 
 head(geo_sf24)
 
@@ -84,7 +104,13 @@ head(geo_sf24)
 #=====================================
 
 st_write(geo_sf19,
-         '/Users/jpg23/data/downtownrecovery/toronto/toronto_unique_devices_2019.geojson')
+         '/Users/jpg23/data/downtownrecovery/toronto/toronto_unique_devices_2019_raw.geojson')
 
 st_write(geo_sf24,
+         '/Users/jpg23/data/downtownrecovery/toronto/toronto_unique_devices_2024_raw.geojson')
+
+st_write(geo_sf19_scaled,
+         '/Users/jpg23/data/downtownrecovery/toronto/toronto_unique_devices_2019.geojson')
+
+st_write(geo_sf24_scaled,
          '/Users/jpg23/data/downtownrecovery/toronto/toronto_unique_devices_2024.geojson')
