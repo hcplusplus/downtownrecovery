@@ -45,3 +45,4 @@ write.csv(
   '/Users/jpg23/data/downtownrecovery/top_300_metros/all_6digit_geohashes_US_CA_2023-04-01_2024-03-31.csv',
   row.names = F
 )
+
