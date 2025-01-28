@@ -121,11 +121,29 @@ bv <- read.csv('/Users/jpg23/data/downtownrecovery/spectus_exports/top300_bloomi
 
 head(bv)
 
+# Add 4 more cities (to make up for Puerto Rico cities)
+#=====================================
+
+all_others <- read.csv('/Users/jpg23/data/downtownrecovery/top_300_metros/all_6digit_geohashes_US_CA_2023-04-01_2024-03-31.csv')
+
+# Filter data to only the geohashes in the 4 "extra" regions
+
+cities4_geo <- read.csv('/Users/jpg23/data/downtownrecovery/top_300_metros/extra4cities_6digit_geohashes.csv')
+
+extra4 <- all_others %>% filter(geohash6 %in% cities4_geo$geohashid)
+
+head(extra4)
+n_distinct(extra4$geohash6)
+summary(extra4$n_stops)
+
 # Aggregate total stops by geohash
 #=====================================
 
+glimpse(d2)
+glimpse(extra4) # make sure they're formatted the same way
+
 d <- 
-  rbind(d2, d3, d4, bv)  %>%
+  rbind(d2, d3, d4, bv, extra4)  %>%
   # rbind(d1, d2, d3, d4)  %>%
   group_by(geohash6) %>%
   summarize(total_stops = sum(n_stops, na.rm = T)) %>%
@@ -136,8 +154,12 @@ n_distinct(d$geohash6)
 nrow(d)
 
 st_write(d,
-         '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31_bloomington_verobeach_included.csv',
+         '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31_includes4extra.csv',
          row.names = F)
+
+# st_write(d,
+#          '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31_bloomington_verobeach_included.csv',
+#          row.names = F)
 
 # st_write(d,
 #          '/Users/jpg23/data/downtownrecovery/top_300_metros/top300_2023-04-01_2024-03-31.csv',

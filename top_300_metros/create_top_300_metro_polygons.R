@@ -79,6 +79,7 @@ canada_new1 %>% filter(str_detect(name, 'Ottawa'))
 #=====================================
 
 all_metros <- rbind(us1, canada_new1 %>% st_transform(st_crs(us1))) %>% 
+  filter(!str_detect(name, 'PR')) %>%
   arrange(desc(population)) %>%
   head(301) # head(300)  change to 301 because Ottawa has 2 rows
 
@@ -88,12 +89,34 @@ unique(all_metros$name)
 
 n_distinct(all_metros$name) # but really 300, because of Ottawa having 2 rows
 
+# Merge Ottawa into one region
+#=====================================
+
+ottawa <- all_metros %>% filter(str_detect(name, 'Ottawa'))
+not_ottawa <- all_metros %>% filter(!str_detect(name, 'Ottawa'))
+
+ottawa_merged <- ottawa %>%
+  mutate(name = "Ottawa - Gatineau (B)") %>%
+  group_by(name) %>%
+  summarise(population = sum(population),
+            geometry = st_union(geometry), .groups = "drop")
+
+ottawa_merged
+
+all_metros_merged <- rbind(not_ottawa, ottawa_merged)
+
+n_distinct(all_metros_merged$name) # should be 300
+all_metros_merged %>% filter(str_detect(name, 'PR')) # should be no rows
+
 # Export shapefile
 #=====================================
 
 st_write(all_metros,
-         '/Users/jpg23/data/downtownrecovery/top_300_metros/top_300_metros_detailed.geojson')
+         '/Users/jpg23/data/downtownrecovery/top_300_metros/metro_regions_full.geojson')
+         # '/Users/jpg23/data/downtownrecovery/top_300_metros/top_300_metros_detailed.geojson')
          # '/Users/jpg23/data/downtownrecovery/top_300_metros/top_300_metros.geojson')
+
+
 
 # Also export Bloomington, IN & Sebastian-Vero Beach, FL to query separately
 # (these were left out of the original query because Ottawa was counted 3x)
